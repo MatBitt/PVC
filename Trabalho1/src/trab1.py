@@ -21,12 +21,12 @@ modo = int(input("grayscale :0 colored: 1\n Qual modo você quer? "))
 
 # Read an image, a window and bind the function to window
 image = cv2.imread("../Imagens/ntw.jpg", modo)
-cv2.namedWindow('mouse')
-cv2.setMouseCallback('mouse',mouse)
+cv2.namedWindow('Original')
+cv2.setMouseCallback('Original',mouse)
 
 #Do until esc pressed
 while(1):
-    cv2.imshow('mouse',image)
+    cv2.imshow('Original',image)
     if cv2.waitKey(20) & 0xFF == 27:
         break
 #if esc pressed, finish.
