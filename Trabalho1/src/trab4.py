@@ -2,6 +2,9 @@ import cv2
 import numpy as np
 import time
 
+global pixel_atual
+global clicou
+
 def pinta(matriz_dist, image, modo):
     if(modo == cv2.IMREAD_GRAYSCALE):
         image = cv2.cvtColor(image, cv2.COLOR_GRAY2BGR)
@@ -36,11 +39,11 @@ def mouse(event,x,y,flags,param):
         global pixel_atual
         clicou = True
         pixel_atual = img[y][x]
-    if(read_mode == cv2.IMREAD_ANYCOLOR):
-        print("linha: ",str(x), " coluna: ", str(y), " B: ",str(img[y][x][0])," G: ",str(img[y][x][1]),"R: ",str(img[y][x][2]))
-    else:
-        print("linha: ",str(x), " coluna: ", str(y), "Gray: ",str(img[y][x]))
-    pass
+        if(modo == 1):
+            print("linha: ",str(x), " coluna: ", str(y), " B: ",str(img[y][x][0])," G: ",str(img[y][x][1]),"R: ",str(img[y][x][2]))
+        else:
+            print("linha: ",str(x), " coluna: ", str(y), "Gray: ",str(img[y][x]))
+        pass
 
 modo = int(input("grayscale :0 colored: 1\n Qual modo você quer? "))
 
@@ -69,8 +72,8 @@ while True:
             cv2.imshow('Painted', result)
     else:
         print("frame is not ready")
-        # It is better 1to wait for a while for the next frame to be ready
         cv2.waitKey(10)
+
     if cv2.waitKey(25) == 27:
         cv2.destroyWindow('Painted')
         cv2.destroyWindow('Original')

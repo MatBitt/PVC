@@ -62,7 +62,7 @@ def mouse(event,x,y,flags,param):
 modo = int(input("grayscale :0 colored: 1\n Qual modo você quer? "))
 
 # Read an image, a window and bind the function to window
-image = cv2.imread("../Imagens/ntw.jpg", modo)
+image = cv2.imread("../data/Kvothe.jpg", modo)
 cv2.namedWindow('Original')
 cv2.setMouseCallback('Original',mouse)
 

@@ -45,7 +45,7 @@ def mouse(event,x,y,flags,param):
 modo = int(input("grayscale :0 colored: 1\n Qual modo você quer? "))
 
 # Read an image, a window and bind the function to window
-video = cv2.VideoCapture('../Vídeos/lee.avi')
+video = cv2.VideoCapture('../data/simpsons.avi')
 
 valida, img = video.read()
 if (not (valida)):
@@ -72,10 +72,8 @@ while True:
         print("frame is not ready")
         cv2.waitKey(10)
     if video.get(cv2.CAP_PROP_POS_FRAMES) == video.get(cv2.CAP_PROP_FRAME_COUNT):
-        video.release()
-        cv2.destroyWindow('Painted')
-        cv2.destroyWindow('Original')
-        break
+        video = cv2.VideoCapture('../data/simpsons.avi')
+        # break
     if cv2.waitKey(25) == 27:
         video.release()
         cv2.destroyWindow('Painted')
