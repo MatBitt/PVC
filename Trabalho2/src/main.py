@@ -93,7 +93,8 @@ def main():
 
         #numero de imagens que queremos detectar o tabuleiro de xadrez para
         #calcular os parametros intrinsecos da camera
-        max_images = 5
+        max_images = 2
+        iteracoes = 2
 
         #Numero de bordas (com 4 quadrados) na vertical e na horizontal do tabuleiro
         board_w = 8
@@ -105,7 +106,7 @@ def main():
         #determina o tempo (s) de espera para mudar o tabuleiro de posicao apos uma deteccao
         time_step = 2
 
-        for i in range(5):
+        for i in range(iteracoes):
             mtx, dist, R, T = calibration(WebCam, tam_quad, board_h, board_w, time_step, max_images)
             PI_11 = np.append(PI_11, mtx[0][0])
             PI_13 = np.append(PI_13, mtx[0][2])
@@ -146,20 +147,27 @@ def main():
 
         correct_distortion(WebCam, IntParam, DistParam, ExtParam, 2)
 
-        print('Media :')
+        print('Media dos parametros intrisecos e distorcao:')
+        print("Intrinsecos:")
         print(IntParam)
+        print("\nDistorcao: ")
         print(DistParam)
 
+        IntParam[0][0] = PI_11.std(ddof=1)
+        IntParam[0][2] = PI_13.std(ddof=1)
+        IntParam[1][1] = PI_22.std(ddof=1)
+        IntParam[1][2] = PI_23.std(ddof=1)
+
         print('Desvio Padrao :')
-        print('%.2f'%PI_11.std(ddof=1))
-        print('%.2f'%PI_13.std(ddof=1))
-        print('%.2f'%PI_22.std(ddof=1))
-        print('%.2f'%PI_23.std(ddof=1))
-        print('%.2f'%PD_1.std(ddof=1))
-        print('%.2f'%PD_2.std(ddof=1))
-        print('%.2f'%PD_3.std(ddof=1))
-        print('%.2f'%PD_4.std(ddof=1))
-        print('%.2f'%PD_5.std(ddof=1))
+        print("Intrinsecos:")
+        print(IntParam)
+        print("Distorcao: ")
+
+        print('[', PD_1.std(ddof=1), end = ' ')
+        print(PD_2.std(ddof=1), end = ' ')
+        print(PD_3.std(ddof=1), end = ' ')
+        print(PD_4.std(ddof=1), end = ' ')
+        print(PD_5.std(ddof=1), end = ']\n')
 
         cv2.destroyAllWindows()
 
@@ -241,6 +249,7 @@ def main():
                 while(time.time() - start_time < 2):
                     pass
 
+        print('\n')
         TranParam = T1.mean(), T2.mean(), T3.mean()
 
         ExtParam[0][0] = R11.mean()
@@ -354,8 +363,8 @@ def main():
 
         #numero de imagens que queremos detectar o tabuleiro de xadrez para
         #calcular os parametros intrinsecos da camera
-        max_images = 5
-        iteracoes = 5
+        max_images = 2
+        iteracoes = 2
 
         #Numero de bordas (com 4 quadrados) na vertical e na horizontal do tabuleiro
         board_w = 8

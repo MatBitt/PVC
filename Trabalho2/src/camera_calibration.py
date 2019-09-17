@@ -12,6 +12,30 @@ pixel_final = 0
 aux_x = 0
 aux_y = 0
 
+def Draw_line(event,x,y,flags,param):
+    global contador
+    global Extrinc
+    global Intrinc
+    global nova_imagem
+    global pixel_inicial
+    global pixel_final
+    global aux_x
+    global aux_y
+    if event == cv2.EVENT_LBUTTONDOWN:
+        if contador == 0:
+            aux_x = x
+            aux_y = y
+            contador = 1
+        elif contador == 1:
+            nova_imagem = 1;
+            pixel_inicial = (aux_x, aux_y)
+            pixel_final = (x,y)
+            contador = 0
+            vet_distancia = distanceBetweenTwoPixels(pixel_inicial, pixel_final, Intrinc, Extrinc)
+            print("Dist [X,Y,Z,0] : ", vet_distancia)
+            dist = sqrt((vet_distancia[0]**2) + (vet_distancia[1]**2) + (vet_distancia[2]**2))
+            print("Distancia real : %.2f"%dist, "mm")
+
 def realDistanceCalculator(intrinsecos,extrinsecos,x,y):
     pseudo_inv_extrinsecos = np.linalg.pinv(extrinsecos)
     intrinsecos_inv = np.linalg.inv(intrinsecos)
@@ -151,35 +175,39 @@ imagem sem distorcao
     Intrinc = mtx
 
     #Inicializa as janelas raw e undistorted
-    cv2.namedWindow("raw")
-    cv2.namedWindow("undistorted")
     if(req == 4):
-        cv2.setMouseCallback("undistorted", Mede_dist)
+        cv2.namedWindow("raw")
+        cv2.namedWindow("undistorted")
+        cv2.setMouseCallback('undistorted', Draw_line)
 
-    grab, img = WebCam.read()
-    h,  w = img.shape[:2]
-    newcameramtx, _ = cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
-
-    # Mapeamento para retirar a distorcao da imagem
-    mapx, mapy = cv2.initUndistortRectifyMap(mtx,dist,None,newcameramtx,(w,h),5)
-
-    print('Aperte q para sair')
-    while True:
         grab, img = WebCam.read()
-        if not grab:
-            break
+        h,  w = img.shape[:2]
+        newcameramtx, _ = cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
 
-        cv2.imshow("raw", img)
+        # Mapeamento para retirar a distorcao da imagem
+        mapx, mapy = cv2.initUndistortRectifyMap(mtx,dist,None,newcameramtx,(w,h),5)
 
-        #remapeamento
-        dst = cv2.remap(img,mapx, mapy,cv2.INTER_LINEAR)
+        print('Aperte q para sair')
+        while True:
+            grab, img = WebCam.read()
+            if not grab:
+                break
 
-        cv2.imshow('undistorted', dst)
+            cv2.imshow("raw", img)
 
-        #Aperte a tecla 'q' para encerrar o programa
-        k = cv2.waitKey(1) & 0xFF
-        if k == ord("q"):
-            break
+            #remapeamento
+            dst = cv2.remap(img,mapx, mapy,cv2.INTER_LINEAR)
+
+            cv2.imshow('undistorted', dst)
+            cv2.setMouseCallback('undistorted', Draw_line)
+            if(nova_imagem):
+                resultado = cv2.line(dst, pixel_inicial, pixel_final, (0,255,0), 2, 8)
+                cv2.imshow('Resultado', resultado)
+
+            #Aperte a tecla 'q' para encerrar o programa
+            k = cv2.waitKey(1) & 0xFF
+            if k == ord("q"):
+                break
 
     cv2.destroyAllWindows()
 
